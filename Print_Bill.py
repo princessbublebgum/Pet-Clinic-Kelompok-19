@@ -1,41 +1,34 @@
-class ClinicInvoice:
-    def __init__(self, client_name):
-        self.client_name = client_name
-        self.services = []
+import pandas as pd
 
-    def add_service(self, service_name, service_cost):
-        self.services.append({"name": service_name, "cost": service_cost})
+file = "./Pet-Clinic-Kelompok-19/data_appt.xlsx"
+df_appt = pd.read_excel(file)
+df_appt = df_appt.set_index("Appt")
+db_appt = df_appt.to_dict(orient='list')
 
-    def calculate_total(self):
-        return sum(service["cost"] for service in self.services)
+# Buat Daftar Harga untuk tiap-tiap Medical Treatment
+file = "./Pet-Clinic-Kelompok-19/data_price.xlsx"
+df_price = pd.read_excel(file)
+db_price = df_price.set_index('Medical Treatment').squeeze().to_dict()
+print(db_price)
 
-    def print_invoice(self):
-        print("Clinic Invoice")
-        print("===================")
-        print(f"Client Name: {self.client_name}")
-        print("-------------------")
-        
-        for service in self.services:
-            print(f"{service['name']}: Rp{service['cost']:.2f}")
-        
-        total_cost = self.calculate_total()
-        print("-------------------")
-        print(f"Total Cost: Rp{total_cost:.2f}")
-        print("===================")
+# Mengakses Data Appt
+def get_medtreat_data(appt_input):
+    return df_appt.loc[appt_input, 'Medical Treatment']
 
-# Fungsi untuk menjalankan program dan mengambil input dari pengguna
-def main():
-    client_name = input("Enter appointment name: ")
-    invoice = ClinicInvoice(client_name)
+# Menampilkan Medical Treatment Hewan 
+def show_medtreat_data():
+    global treatment_data
+    global appt_input
+    appt_input = input("Appointment Name: ")
+    treatment_data = get_medtreat_data(appt_input)
 
-    while True:
-        service_name = input("Enter service name (or 'done' to finish): ")
-        if service_name.lower() == 'done':
-            break
-        service_cost = float(input(f"Enter cost for {service_name}: "))
-        invoice.add_service(service_name, service_cost)
+def print_bill():
+    global price
+    price = db_price[treatment_data]
+    return price
 
-    invoice.print_invoice()
-
-if __name__ == "__main__":
-    main()
+show_medtreat_data()
+print("Appt. Name : ", appt_input)
+print("Medical Treament : ", treatment_data)
+print_bill()
+print("Total Bill : ", price)

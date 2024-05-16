@@ -1,3 +1,7 @@
+# Untuk Display Menu itu gak perlu dibuat fungsi (ini kamu kerjainnya nanti aja pas buat GUI)
+# Fungsi main() juga gak perlu
+# Yang harus kamu buat itu fungsi untuk command tiap button di menu (kayaknya kerjain pas buat GUI-nya aja)
+
 def display_menu():
     print("Pilih opsi menu:")
     print("Buat appointment baru")
