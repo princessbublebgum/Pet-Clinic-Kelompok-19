@@ -1,3 +1,3 @@
-import all_feature as af
+from all_feature import *
 
-af.owner_name()
+owner_name()
