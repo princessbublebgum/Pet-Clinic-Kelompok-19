@@ -17,6 +17,6 @@ def login():
     else:
         print("Nama pengguna atau kata sandi salah. Silakan coba lagi.")
         
-login()
-
+if __name__== '__main__':
+    pass
 

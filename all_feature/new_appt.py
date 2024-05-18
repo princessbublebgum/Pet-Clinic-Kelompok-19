@@ -1,7 +1,6 @@
 import pandas as pd
 
 # Data Base Appointment
-
 file = "./Pet-Clinic-Kelompok-19/data_appt.xlsx"
 df_appt = pd.read_excel(file)
 db_appt = df_appt.to_dict(orient='list')
@@ -59,10 +58,5 @@ def date():
     update_df = update_df.transpose()
     update_df.to_excel(file, index=False)
 
-owner_name()
-patient_name()
-breed()
-sex()
-age()
-med_treat()
-date()
+if __name__== '__main__':
+    pass

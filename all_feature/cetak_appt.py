@@ -16,6 +16,7 @@ def input_name():
 def get_data():
     return df_appt.loc[appt_input]
 
-
+if __name__== '__main__':
+    pass
 
 

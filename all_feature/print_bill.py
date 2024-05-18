@@ -22,7 +22,7 @@ def show_medtreat_data():
     appt_input = input("Appointment Name: ")
     treatment_data = get_medtreat_data(appt_input)
 
-def print_bill():
+def print_bill1():
     global price
     price = db_price[treatment_data]
     return price
@@ -30,5 +30,8 @@ def print_bill():
 show_medtreat_data()
 print("Appt. Name : ", appt_input)
 print("Medical Treament : ", treatment_data)
-print_bill()
+print_bill1()
 print("Total Bill : ", price)
+
+if __name__== '__main__':
+    pass
