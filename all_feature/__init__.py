@@ -12,5 +12,4 @@ from .new_appt import age
 from .new_appt import med_treat
 from .new_appt import date
 from .print_bill import get_medtreat_data
-from .print_bill import show_medtreat_data
-from .print_bill import print_bill1
+from .print_bill import get_price

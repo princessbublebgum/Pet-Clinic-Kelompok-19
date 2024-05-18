@@ -1,30 +1,22 @@
 import pandas as pd
 
-file = "./Pet-Clinic-Kelompok-19/data_appt.xlsx"
-df_appt = pd.read_excel(file)
+# Membaca file Excel
+file_appt = "./Pet-Clinic-Kelompok-19/data_appt.xlsx"
+df_appt = pd.read_excel(file_appt)
 df_appt = df_appt.set_index("Appt")
 db_appt = df_appt.to_dict(orient='list')
 
-# Buat Daftar Harga untuk tiap-tiap Medical Treatment
-file = "./Pet-Clinic-Kelompok-19/data_price.xlsx"
-df_price = pd.read_excel(file)
+file_price = "./Pet-Clinic-Kelompok-19/data_price.xlsx"
+df_price = pd.read_excel(file_price)
 db_price = df_price.set_index('Medical Treatment').squeeze().to_dict()
 
-# Mengakses Data Appt
+# Fungsi untuk mendapatkan data Medical Treatment berdasarkan janji temu
 def get_medtreat_data(appt_input):
-    return df_appt.loc[appt_input, 'Medical Treatment']
+    return df_appt.loc[appt_input, 'Medical Treatment'] if appt_input in df_appt.index else None
 
-# Menampilkan Medical Treatment Hewan 
-def show_medtreat_data():
-    global treatment_data
-    global appt_input
-    appt_input = input("Appointment Name: ")
-    treatment_data = get_medtreat_data(appt_input)
-
-def print_bill1():
-    global price
-    price = db_price[treatment_data]
-    return price
+# Fungsi untuk menghitung harga berdasarkan Medical Treatment
+def get_price(treatment):
+    return db_price[treatment] if treatment in db_price else None
 
 if __name__== '__main__':
     pass
