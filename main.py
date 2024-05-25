@@ -1,52 +1,55 @@
-from all_feature import *
-from kivy.app import App
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.button import Button
-from kivy.uix.label import Label
-from kivy.uix.textinput import TextInput
+from kivymd.app import MDApp
+from kivymd.uix.screen import MDScreen
+from kivymd.uix.label import MDLabel
+from kivymd.uix.floatlayout import MDFloatLayout
+from kivymd.uix.anchorlayout import MDAnchorLayout
+from kivymd.uix.button import MDButton, MDButtonText, MDButtonIcon
+from kivy.utils import get_color_from_hex
+from kivy.core.text import LabelBase
+from kivy.metrics import sp
 
-
-# Kelas untuk Kivy App
-class PetClinicApp(App):
+class MainApp(MDApp):
     def build(self):
-        self.layout = BoxLayout(orientation='vertical')
+        screen = MDScreen(md_bg_color = get_color_from_hex("#CDE2FF"))
 
-        # TextInput untuk memasukkan janji temu
-        self.appt_input = TextInput(
-            hint_text='Enter Appointment Name',
-            size_hint=(1, 0.2),
-            multiline=False
+        layout_title = MDAnchorLayout(
+            md_anchor_x='left', md_anchor_y='bottom',
+            radius = [25, 25, 25, 25],
+            md_bg_color = get_color_from_hex("#FFF000"),
+            size_hint = (0.5, 0.2),
+            pos_hint={"center_x": 0.325, "center_y": 0.7},
         )
-        self.layout.add_widget(self.appt_input)
 
-        # Tombol untuk mencari janji temu dan mencetak tagihan
-        self.search_button = Button(text='Search', size_hint=(1, 0.2))
-        self.search_button.bind(on_press=self.show_medtreat_and_print_bill)
-        self.layout.add_widget(self.search_button)
+        layout = MDFloatLayout(
+            radius = [25, 25, 25, 25],
+            md_bg_color = get_color_from_hex("#FFF9E6"),
+            size_hint = (0.85, 0.6),
+            pos_hint={"center_x": 0.5, "center_y": 0.4}
+        )
 
-        # Label untuk menampilkan Medical Treatment
-        self.treatment_label = Label(text='Medical Treatment: ', size_hint=(1, 0.2))
-        self.layout.add_widget(self.treatment_label)
+        LabelBase.register(
+            name="font50",
+            fn_regular="/Users/Najwa Permata Hadi/Documents/Tugas Besar Programa Komputer/Pet-Clinic-Kelompok-19/font50.ttf",
+        )
 
-        # Label untuk menampilkan harga
-        self.price_label = Label(text='Price: ', size_hint=(1, 0.2))
-        self.layout.add_widget(self.price_label)
+        self.theme_cls.font_styles["font50"] = {
+            "large": {
+                "line-height": 1.64,
+                "font-name": "font50",
+                "font-size": sp(55)
+            }
+        }
 
-        return self.layout
+        label_title = MDLabel(
+            text = "Owner's Information",
+            font_style = "font50"
+            )
 
-    def show_medtreat_and_print_bill(self, instance):
-        appt_input = self.appt_input.text
-        treatment_data = get_medtreat_data(appt_input)
-        if treatment_data:
-            self.treatment_label.text = f'Medical Treatment: {treatment_data}'
-            price = get_price(treatment_data)
-            if price:
-                self.price_label.text = f'Price: {price}'
-            else:
-                self.price_label.text = 'Price: Not Available'
-        else:
-            self.treatment_label.text = 'Medical Treatment: Not Found'
-            self.price_label.text = 'Price: Not Found'
+        layout_title.add_widget(label_title)
+        screen.add_widget(layout)
+        screen.add_widget(layout_title)
 
-if __name__ == '__main__':
-    PetClinicApp().run()
+        return screen
+
+if __name__ == "__main__":
+    MainApp().run()
