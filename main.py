@@ -168,3 +168,150 @@ class LoginApp(App):
 
 if __name__ == '__main__':
     LoginApp().run()
+
+from kivy.lang import Builder
+from kivymd.app import MDApp
+from kivymd.uix.screenmanager import MDScreenManager
+from kivy.config import Config
+Config.set ("graphics", "resizable", False)
+
+KV = '''
+
+<MyScreenManager>:
+    MDScreen:
+        name: "Login"
+        md_bg_color: "#CDE2FF"
+
+        MDLabel:
+            text: "Login"
+            adaptive_size: True
+            pos_hint: {"x": .075, "y": .65}
+
+        # Relative atau Box
+        MDRelativeLayout:
+            md_bg_color: "#FFF9E6"
+            size_hint: 0.85, 0.5
+            pos_hint: {"center_x": 0.5, "y": 0.13}
+            radius: 25, 25, 25, 25
+
+            MDLabel:
+                text: "Login"
+                adaptive_size: True
+                pos_hint: {"x": 0.05, "y": 0.85}
+
+            MDLabel:
+                text: "ID Name"
+                adaptive_size: True
+                pos_hint: {"x": 0.05, "y": 0.725}
+
+            MDTextField
+                mode: "outlined"
+                size_hint: 0.902, None
+                height: "50dp"
+                pos_hint: {"center_x": 0.5, "y": 0.5}
+                radius: 15, 15, 15, 15
+
+            MDLabel:
+                text: "Password"
+                adaptive_size: True
+                pos_hint: {"x": 0.05, "y": 0.4}
+
+            MDTextField
+                mode: "outlined"
+                size_hint: 0.902, None
+                heigth: "50dp"
+                pos_hint: {"center_x": 0.5, "y": 0.18}
+                radius: 15, 15, 15, 15
+
+            MDButton:
+                md_bg_color:"#062D3E"
+                size_hint: 0.5, None
+                pos_hint: {"center_x": 0.8, "y": 0.1}
+                on_release: root.current = "PetInformation"
+
+                MDButtonText:
+                    md_bg_color: "#FFF9E6"
+                    text: "Login"
+            
+    MDScreen:
+        name: "PetInformation"
+        md_bg_color: "#CDE2FF"
+
+        MDLabel:
+            text: "Pet Clinic Administration"
+            adaptive_size: True
+            pos_hint: {"x": .43, "y": .8}
+        
+        MDButton:
+            md_bg_color:"#062D3E"
+            size_hint: 0.5, None
+            pos_hint: {"center_x": 0.9, "y": 0.05}
+            on_release: root.current = "PetInformation"
+
+            MDButtonText:
+                md_bg_color: "#FFF9E6"
+                text: "Logout"
+            
+        MDBoxLayout:
+            orientation: "vertical"
+            pos_hint: {"center_x": 0.5, "y": 0.15}
+            md_bg_color: "#FFF9E6"
+            size_hint: 0.85, 0.5
+            radius: 25, 25, 25, 25
+
+            MDButton:
+                style: "tonal"
+                theme_width: "Custom"
+                height: "82dp"
+                size_hint_x: 1.0
+
+                MDButtonText:
+                    id: text
+                    text: "New Appointment"
+                    pos_hint: {"center_x": .5, "center_y": .5}
+
+            MDButton:
+                style: "tonal"
+                theme_width: "Custom"
+                height: "82dp"
+                size_hint_x: 1.0
+
+                MDButtonText:
+                    id: text
+                    text: "Cancel Appointment"
+                    pos_hint: {"center_x": .5, "center_y": .5}
+
+            MDButton:
+                style: "tonal"
+                theme_width: "Custom"
+                height: "82dp"
+                size_hint_x: 1.0
+
+                MDButtonText:
+                    id: text
+                    text: "View Appointment"
+                    pos_hint: {"center_x": .5, "center_y": .5}
+
+            MDButton:
+                style: "tonal"
+                theme_width: "Custom"
+                height: "82dp"
+                size_hint_x: 1.0
+
+                MDButtonText:
+                    id: text
+                    text: "Print Bill"
+                    pos_hint: {"center_x": .5, "center_y": .5}
+            
+        
+'''
+
+class MyScreenManager(MDScreenManager):
+    pass
+
+class Example(MDApp):
+    def build(self):
+        Builder.load_string(KV)
+        return MyScreenManager()
+
+Example().run()
