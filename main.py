@@ -195,7 +195,7 @@ KV = '''
                 size_hint_x: 1
                 radius: 18.75, 18.75, 18.75, 18.75
                 pos_hint: {"center_x": 0.5, "center_y": 0.5}
-                # on_release: root.current = "OwnerInformation"
+                on_release: root.current = "PrintBillInformation"
                 
                 MDButtonText:
                     text: "Print Bill"
@@ -530,17 +530,17 @@ KV = '''
             text_color: "#062D3E"
             role: "large"
             adaptive_size: True
-            pos_hint: {"x": 0.075, "y": 0.75}
+            pos_hint: {"x": 0.2, "y": 0.75}
         
         MDGridLayout:
             cols: 2
             row: 2
             radius: 25, 25, 25, 25
             padding: "35dp"
-            spacing: "40dp"
-            size_hint: 0.85, 0.58
+            spacing: "35dp"
+            size_hint: 0.6, 0.55
             md_bg_color: "#FFF9E6"
-            pos_hint: {"center_x": 0.5, "y": 0.125}
+            pos_hint: {"center_x": 0.5, "y": 0.15}
 
             MDLabel:
                 text: "select treatment"
@@ -568,7 +568,7 @@ KV = '''
                     md_bg_color: "#F4E8D9"
                     height: "50dp"
                     theme_width: "Custom"
-                    size_hint_x: 0.75
+                    size_hint_x: 1
                     on_release: app.menu_open()
 
                     MDButtonText:
@@ -586,7 +586,7 @@ KV = '''
                     
                 MDRelativeLayout:
                     md_bg_color: "#F4E8D9"
-                    size_hint: 0.75, 0.7
+                    size_hint: 1, 0.7
                     radius: 25, 25, 25, 25
 
                     MDLabel:
@@ -594,7 +594,7 @@ KV = '''
                         font_style: "semi_bold"
                         role: "medium"
                         text_color: "#062D3E"
-                        size_hint: 0.75, 0.2
+                        size_hint: 1, 0.2
                         pos_hint: {"x": 0.075, "y": 0.65}
 
                     MDLabel:
@@ -609,7 +609,7 @@ KV = '''
                     
                 MDRelativeLayout:
                     md_bg_color: "#FFF9E6"
-                    size_hint: 0.75, 0.3
+                    size_hint: 1, 0.2
                     radius: 25, 25, 25, 25
 
             MDBoxLayout:
@@ -623,7 +623,7 @@ KV = '''
                     md_bg_color: "#F4E8D9"
                     height: "50dp"
                     theme_width: "Custom"
-                    size_hint_x: 0.75
+                    size_hint_x: 1
                     on_release: app.show_date_picker()
             
                     MDButtonText:
@@ -642,7 +642,7 @@ KV = '''
                 
                 MDRelativeLayout:
                     md_bg_color: "#F4E8D9"
-                    size_hint: 0.75, 0.7
+                    size_hint: 1, 0.7
                     radius: 25, 25, 25, 25
 
                     MDLabel:
@@ -650,7 +650,7 @@ KV = '''
                         font_style: "semi_bold"
                         role: "medium"
                         text_color: "#062D3E"
-                        size_hint: 0.75, 0.2
+                        size_hint: 1, 0.2
                         pos_hint: {"x": 0.075, "y": 0.65}
 
                     MDLabel:
@@ -665,7 +665,7 @@ KV = '''
                     
                 MDRelativeLayout:
                     md_bg_color: "#FFF9E6"
-                    size_hint: 0.75, 0.3
+                    size_hint: 1, 0.2
                     radius: 25, 25, 25, 25
         
         MDButton:
@@ -674,18 +674,74 @@ KV = '''
             theme_width: "Custom"
             width: "140dp"
             md_bg_color: "#062D3E"
-            pos_hint: {"x": 0.785, "y": 0.115}
+            pos_hint: {"x": 0.65, "y": 0.19}
             on_release:
                 app.upload_data()
+                root.current = "Menu"
 
             MDButtonText:
-                text: "next"
+                text: "save"
                 pos_hint: {"center_x": .5, "center_y": .5}
                 font_style: "semi_bold"
                 role: "small"
                 theme_text_color: "Custom"
                 text_color: "#CDE2FF"
 
+        MDButton:
+            style: "elevated"
+            theme_bg_color: "Custom"
+            theme_width: "Custom"
+            width: "140dp"
+            md_bg_color: "#062D3E"
+            pos_hint: {"x": 0.525, "y": 0.19}
+            on_release: root.current = "PetInformation"
+                
+            MDButtonText:
+                text: "back"
+                pos_hint: {"center_x": .5, "center_y": .5}
+                font_style: "semi_bold"
+                role: "small"
+                theme_text_color: "Custom"
+                text_color: "#CDE2FF"
+
+    MDScreen:
+        name: "PrintBillInformation"
+        md_bg_color: "#CDE2FF"
+
+        MDLabel:
+            text: "Print Bill"
+            font_style: "bold"
+            text_color: "#062D3E"
+            role: "large"
+            adaptive_size: True
+            pos_hint: {"x": 0.075, "y": 0.75}
+        
+        MDBoxLayout:
+            orientation: "vertical"
+            md_bg_color: "#FFF9E6"
+            radius: 25, 25, 25, 25
+            padding: "20dp"
+            spacing: "20dp"
+            size_hint: 0.6, 0.2
+            pos_hint: {"center_x": 0.5, "y": 0.575}
+
+            MDLabel:
+                text: "find appt : "
+                font_style: "bold"
+                role: "medium"
+                text_color: "#062D3E"
+                pos_hint: {"center_x": 0.5, "y": 0.5}
+
+            MDTextField:
+                id: search_field
+                style: "outlined"
+                font_style: "Title"
+                role: "medium"
+                radius: 12.5, 12.5, 12.5, 12.5
+                pos_hint: {"center_x": 0.5, "y": 0.5}
+                on_text: app.filter_menu(self.text)
+                on_focus: if self.focus: app.find_appt()
+        
 
 
 
@@ -696,6 +752,7 @@ class MyScreenManager(MDScreenManager):
     pass
 
 class Example(MDApp):
+    # Membuat Drop Down Menu
     def menu_open(self):
         treatments = self.extract_medical_treatments("Pet-Clinic-Kelompok-19/price.csv")
         menu_items = [
@@ -713,18 +770,22 @@ class Example(MDApp):
             radius=[5, 5, 5, 5]
         ).open()
 
+    # Membaca Data untuk Menu Drop Down (Data Treatment yang Ada)
     def extract_medical_treatments(self, csv_file):
         treatments = []
         with open(csv_file, 'r', newline='') as file:
             reader = csv.reader(file)
+            next(reader)
             for row in reader:
-                treatment = row[0]  # Assuming the first column contains treatment names
+                treatment = row[0]
                 treatments.append(treatment)
         return treatments
 
+    # Menampilkan Treatment yang dipilih
     def menu_callback(self, text_item):
         self.root.ids.selected_item_label.text = f"{text_item}"
     
+    # Tombol edit pada kalendar
     def show_modal_input_date_picker(self, *args):
         def on_edit(*args):
             date_dialog.dismiss()
@@ -734,28 +795,23 @@ class Example(MDApp):
         date_dialog.bind(on_edit=on_edit)
         date_dialog.open()
 
-    def show_modal_input_date_picker(self, *args):
-        def on_edit(*args):
-            date_dialog.dismiss()
-            Clock.schedule_once(self.show_modal_date_picker, 0.2)
-
-        date_dialog = MDModalInputDatePicker()
-        date_dialog.bind(on_edit=on_edit)
-        date_dialog.open()
-
+    # Event On_edit pada kalendar
     def on_edit(self, instance_date_picker):
         instance_date_picker.dismiss()
         Clock.schedule_once(self.show_modal_input_date_picker, 0.2)
     
+    # Tombol OK
     def on_ok(self, instance_date_picker):
         global date
         date = instance_date_picker.get_date()[0]
         self.root.ids.selected_date_label.text = f"{date}"
         instance_date_picker.dismiss()
     
+    #Tombol Cancel
     def on_cancel(self, instance_date_picker):
         instance_date_picker.dismiss()
 
+    #Menampilkan Kalendar
     def show_date_picker(self):
         date_dialog = MDModalDatePicker()
         date_dialog.bind(on_edit=self.on_edit)
@@ -763,21 +819,23 @@ class Example(MDApp):
         date_dialog.open()
         date_dialog.bind(on_cancel=self.on_cancel)
 
+    #Login
     def login(self):
         id_name = self.root.ids.id_field.text
         password = self.root.ids.password_field.text
         
-        # Load CSV file
+        #Membaca Database Pengguna
         file_path = "Pet-Clinic-Kelompok-19/database_login.csv"
         with open(file_path, newline='') as csvfile:
             reader = csv.DictReader(csvfile)
             for row in reader:
                 if row['ID Name'] == id_name and row['Password'] == password:
-                    # Successful login
+                    #Berhasil Login
                     self.root.current = "Menu"
                     self.root.ids.nurse_name.text = f"Ns. {id_name}"
                     return
-        # Failed login
+                
+        #Gagal Login
         MDSnackbar(
             MDSnackbarText(
                 text="Incorrect ID Name or Password",
@@ -786,24 +844,24 @@ class Example(MDApp):
                 pos_hint={"x" : 0.025},
                 size_hint_x=0.4).open()
         
-    # def check_and_proceed(self):
-    #     if self.root.ids.owner_field.text == "" or self.root.ids.phone_field.text == "":
-    #         self.root.ids.button_next.disabled = True
-    
+    #Menghapus Input pada TextField
     def clear_text_field(self):
         self.root.ids.id_field.text = f""
         self.root.ids.password_field.text = f""
 
+    #Mengambil Input dari Checkbox Male/Female
     def on_checkbox_active(self, value):
         global male
         male = value
         return male
     
+    #Mengambil Input dari Checkbox Spayed/Neuteur
     def on_checkbox_active2(self, value):
         global spayed
         spayed = value
         return spayed
 
+    #Menyimpan Data Appt ke Database
     def upload_data(self):
         appt = str(self.root.ids.owner_field.text)
         patient = str(self.root.ids.petname_field.text)
@@ -816,7 +874,43 @@ class Example(MDApp):
                 writer = csv.writer(file)
                 writer.writerow([appt, patient, weight, male, breed, age, spayed, medtreat, date])
 
+    def filter_menu(self, search_text):
+        filtered_items = [item for item in self.all_appt_items if search_text.lower() in item['text'].lower()]
+        self.appt.items = filtered_items
+        if search_text == '':
+            self.appt.items = self.all_appt_items
+
+    def set_item(self, appt_item):
+        self.root.ids.search_field.text = appt_item
+        self.menu.dismiss()
+
+    def extract_appt(self, csv_file):
+        allappt = []
+        with open(csv_file, 'r', newline='') as file:
+            reader = csv.reader(file)
+            next(reader)
+            for row in reader:
+                appt = row[0]  # Assuming the first column contains appt names
+                allappt.append(appt)
+        return allappt
+
+    def find_appt(self):
+        allappt = self.extract_appt("Pet-Clinic-Kelompok-19/data_appt.csv")
+        all_appt_items = [
+            {
+                "text": appt,
+                "on_release": lambda x=appt: self.set_item(x),
+            } for appt in allappt
+        ]
+
+        MDDropdownMenu(
+            caller=self.root.ids.search_field,
+            items=all_appt_items,
+            position="bottom",
+        ).open()
+
     def build(self):
+
         LabelBase.register(
             name="bold",
             fn_regular="bold.ttf",
