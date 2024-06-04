@@ -4,6 +4,8 @@ from kivymd.app import MDApp
 from kivymd.uix.screenmanager import MDScreenManager
 from kivy.config import Config
 Config.set ("graphics", "resizable", False)
+Config.set ("graphics", "width", 1920)
+Config.set ("graphics", "height", 1080)
 from kivy.core.window import Window
 from kivy.core.text import LabelBase
 from kivy.metrics import sp, dp
