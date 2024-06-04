@@ -1,4 +1,5 @@
 from kivy.lang import Builder
+import webbrowser
 from kivymd.app import MDApp
 from kivymd.uix.screenmanager import MDScreenManager
 from kivy.config import Config
@@ -11,6 +12,13 @@ from kivymd.uix.pickers import MDModalDatePicker, MDModalInputDatePicker
 from kivymd.uix.snackbar import MDSnackbar, MDSnackbarText
 from kivy.clock import Clock
 from fpdf import FPDF
+from kivy.utils import get_color_from_hex
+from kivymd.uix.list import (
+    MDListItem,
+    MDListItemHeadlineText,
+    MDListItemSupportingText,
+)
+import pandas as pd
 import csv
 
 Window.maximize()
@@ -19,30 +27,31 @@ KV = '''
 <MyScreenManager>:
     MDScreen:
         name: "LoginInterface"
-        md_bg_color: "#CDE2FF"
+        FitImage:
+            source: "image/BG_Login.png"
 
         MDLabel:
             text: "Pet Clinic Adm."
             font_style: "bold"
             text_color: "#062D3E"
-            role: "small"
+            role: "large"
             adaptive_size: True
             pos_hint: {"x": 0.16, "y": 0.7825}
         
         MDBoxLayout:
             size_hint: 0.16, 0.16
-            pos_hint: {"x": 0.025, "y": 0.75}
+            pos_hint: {"x": 0.025, "y": 0.755}
         
             Image:
-                source: "./Pet-Clinic-Kelompok-19/logo.png"
+                source: "image/logo.png"
         
         MDLabel:
             text: "Login"
             font_style: "bold"
             text_color: "#062D3E"
-            role: "large"
+            role: "medium"
             adaptive_size: True
-            pos_hint: {"x": 0.075, "y": 0.585}
+            pos_hint: {"x": 0.075, "y": 0.59}
                 
         MDBoxLayout:
             orientation: "vertical"
@@ -104,7 +113,7 @@ KV = '''
             theme_width: "Custom"
             width: "140dp"
             md_bg_color: "#062D3E"
-            pos_hint: {"x": 0.315, "y": 0.1475}
+            pos_hint: {"x": 0.3215, "y": 0.1475}
             on_release:
                 app.login()
 
@@ -124,13 +133,18 @@ KV = '''
             text: "Hello!"
             font_style: "bold"
             text_color: "#062D3E"
-            role: "small"
+            role: "large"
             adaptive_size: True
-            pos_hint: {"center_x": 0.5, "y": 0.7}
+            pos_hint: {"x": 0.4, "y": 0.7}
+        
+        Image:
+            source: "image/pawprint2.png"
+            size_hint: 0.15, 0.15
+            pos_hint: {"x": 0.525, "y": 0.6875}
 
         MDBoxLayout:
             orientation: "vertical"
-            pos_hint: {"center_x": 0.5, "center_y": 0.47}
+            pos_hint: {"center_x": 0.5, "center_y": 0.45}
             spacing: "12.5dp"
             size_hint: 0.35, 0.4
 
@@ -152,6 +166,27 @@ KV = '''
                     theme_text_color: "Custom"
                     text_color: "#062D3E"
                     pos_hint: {"center_x": .5, "center_y": .5}
+
+            MDButton:
+                style: "tonal"
+                theme_bg_color: "Custom"
+                md_bg_color: "#FFF9E6"
+                height: "60dp"
+                theme_width: "Custom"
+                size_hint_x: 1
+                radius: 20, 20, 20, 20
+                pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                on_release:
+                    root.current = "ViewAllAppt"
+                    # app.list_all()
+                
+                MDButtonText:
+                    text: "View All Appointment"
+                    pos_hint: {"center_x": .5, "center_y": .5}
+                    font_style: "semi_bold"
+                    role: "medium"
+                    theme_text_color: "Custom"
+                    text_color: "#062D3E"
             
             MDButton:
                 style: "tonal"
@@ -190,16 +225,15 @@ KV = '''
                     role: "medium"
                     theme_text_color: "Custom"
                     text_color: "#062D3E"
-            
+
         MDButton:
             style: "elevated"
             theme_bg_color: "Custom"
             theme_width: "Custom"
             width: "140dp"
             md_bg_color: "#062D3E"
-            pos_hint: {"x": 0.85, "y": 0.07}
+            pos_hint: {"x": 0.85, "y": 0.0675}
             on_release:
-                app.clear_login_field()
                 app.close_program()
 
             MDButtonText:
@@ -221,7 +255,7 @@ KV = '''
                 spacing: "20dp"
 
                 MDLabel:
-                    text: "Hello, Nurse!"
+                    text: "Hello,"
                     font_style: "semi_bold"
                     text_color: "#062D3E"
                     role: "medium"
@@ -232,6 +266,8 @@ KV = '''
                     font_style: "regular"
                     text_color: "#062D3E"
                     role: "medium"
+        FitImage:
+            source: "image/BG_1.png"
         
     MDScreen:
         name: "OwnerInformation"
@@ -241,9 +277,9 @@ KV = '''
             text: "New Appointment"
             font_style: "bold"
             text_color: "#062D3E"
-            role: "large"
+            role: "medium"
             adaptive_size: True
-            pos_hint: {"x": 0.075, "y": 0.75}
+            pos_hint: {"x": 0.1975, "y": 0.75}
         
         MDBoxLayout:
             orientation: "vertical"
@@ -251,13 +287,13 @@ KV = '''
             radius: 25, 25, 25, 25
             padding: "35dp"
             spacing: "5dp"
-            size_hint: 0.85, 0.58
-            pos_hint: {"center_x": 0.5, "y": 0.125}
+            size_hint: 0.6, 0.55
+            pos_hint: {"center_x": 0.5, "y": 0.165}
 
             MDLabel:
                 text: "owner information"
                 font_style: "bold"
-                role: "medium"
+                role: "small"
                 text_color: "#062D3E"
                 adaptive_size: True
 
@@ -307,9 +343,9 @@ KV = '''
                     theme_width: "Custom"
                     width: "140dp"
                     md_bg_color: "#062D3E"
-                    pos_hint: {"x": 0.85}
+                    pos_hint: {"x": 0.815}
                     on_release:
-                        root.current = "PetInformation"
+                        app.validate_owner_info()
 
                     MDButtonText:
                         text: "next"
@@ -320,13 +356,13 @@ KV = '''
                         text_color: "#CDE2FF"
                 
         MDButton:
-            id: button_next
+            id: button_back
             style: "elevated"
             theme_bg_color: "Custom"
             theme_width: "Custom"
             width: "140dp"
             md_bg_color: "#062D3E"
-            pos_hint: {"x": 0.665, "y": 0.175}
+            pos_hint: {"x": 0.225, "y": 0.215}
             on_release:
                 root.current = "Menu"
 
@@ -337,6 +373,9 @@ KV = '''
                 role: "small"
                 theme_text_color: "Custom"
                 text_color: "#CDE2FF"
+        
+        FitImage:
+            source: "image/BG_3.png"
     
     MDScreen:
         name: "PetInformation"
@@ -346,29 +385,29 @@ KV = '''
             text: "New Appointment"
             font_style: "bold"
             text_color: "#062D3E"
-            role: "large"
+            role: "medium"
             adaptive_size: True
-            pos_hint: {"x": 0.075, "y": 0.77}
+            pos_hint: {"x": 0.0715, "y": 0.8}
 
         MDBoxLayout:
             orientation: "vertical"
             md_bg_color: "#FFF9E6"
             radius: 25, 25, 25, 25
-            padding: "30dp"
+            padding: "38dp"
             spacing: "27.5dp"
-            size_hint: 0.86, 0.65
-            pos_hint: {"center_x": 0.5, "y": 0.078}
+            size_hint: 0.86, 0.675
+            pos_hint: {"center_x": 0.5, "y": 0.09}
 
             MDLabel:
                 text: "pet information"
                 font_style: "bold"
-                role: "medium"
+                role: "small"
                 text_color: "#062D3E"
                 adaptive_size: True
         
             MDGridLayout:
                 cols: 2
-                row: 6
+                row: 8
                 spacing: "38dp", "22.5dp"
 
                 MDLabel:
@@ -378,7 +417,7 @@ KV = '''
                     text_color: "#062D3E"
                     
                 MDLabel:
-                    text: "age"
+                    text: "age (in years old)"
                     font_style: "light"
                     role: "small"
                     text_color: "#062D3E"
@@ -386,14 +425,14 @@ KV = '''
                 MDTextField:
                     id: petname_field
                     font_style: "Title"
-                    role: "medium"
+                    role: "large"
                     mode: "outlined"
                     radius: 8, 8, 8, 8
 
                 MDTextField:
                     id: age_field
                     font_style: "Title"
-                    role: "medium"
+                    role: "large"
                     mode: "outlined"
                     radius: 8, 8, 8, 8
                     
@@ -412,7 +451,7 @@ KV = '''
                 MDTextField:
                     id: breed_field
                     font_style: "Title"
-                    role: "medium"
+                    role: "large"
                     mode: "outlined"
                     radius: 8, 8, 8, 8
 
@@ -431,7 +470,7 @@ KV = '''
                         size: dp(20), dp(20)
                         pos_hint: {'center_x': 0.025, 'center_y': .5}
                         active: False
-                        on_active: app.on_checkbox_active("Male" if self.active else "")
+                        on_active: app.check_sex("Male" if self.active else "")
 
                     MDLabel:
                         text: "female"
@@ -446,10 +485,10 @@ KV = '''
                         size: dp(20), dp(20)
                         pos_hint: {'center_x': 0.35, 'center_y': .5}
                         active: False
-                        on_active: app.on_checkbox_active("Female" if self.active else "")
+                        on_active: app.check_sex("Female" if self.active else "")
 
                 MDLabel:
-                    text: "weight"
+                    text: "weight (in kg)"
                     font_style: "light"
                     role: "small"
                     text_color: "#062D3E"
@@ -463,7 +502,7 @@ KV = '''
                 MDTextField:
                     id: weight_field
                     font_style: "Title"
-                    role: "medium"
+                    role: "large"
                     mode: "outlined"
                     radius: 8, 8, 8, 8
 
@@ -482,7 +521,7 @@ KV = '''
                         size: dp(20), dp(20)
                         pos_hint: {'center_x': 0.025, 'center_y': .5}
                         active: False
-                        on_active: app.on_checkbox_active2("Yes" if self.active else "")
+                        on_active: app.check_spay("Yes" if self.active else "")
 
                     MDLabel:
                         id: no_spayed_field
@@ -497,11 +536,23 @@ KV = '''
                         size_hint: None, None
                         size: dp(20), dp(20)
                         pos_hint: {'center_x': 0.35, 'center_y': .5}
-                        on_active: app.on_checkbox_active2("No" if self.active else "")
+                        on_active: app.check_spay("No" if self.active else "")
 
             MDLabel:
                 text: ""
                 size_hint: 1, 0.4
+
+            MDLabel:
+                text: ""
+                size_hint: 1, 0.4
+
+            MDLabel:
+                text: ""
+                size_hint: 1, 0.6
+            
+            MDLabel:
+                text: ""
+                size_hint: 1, 0.6
 
         MDButton:
             style: "elevated"
@@ -509,9 +560,9 @@ KV = '''
             theme_width: "Custom"
             width: "140dp"
             md_bg_color: "#062D3E"
-            pos_hint: {"x": 0.785, "y": 0.115}
+            pos_hint: {"x": 0.8, "y": 0.125}
             on_release:
-                root.current = "MedTreatmentInformation"
+                app.validate_pet_info()
 
             MDButtonText:
                 text: "next"
@@ -527,7 +578,7 @@ KV = '''
             theme_width: "Custom"
             width: "140dp"
             md_bg_color: "#062D3E"
-            pos_hint: {"x": 0.67, "y": 0.115}
+            pos_hint: {"x": 0.096, "y": 0.125}
             on_release: root.current = "OwnerInformation"
 
             MDButtonText:
@@ -546,7 +597,7 @@ KV = '''
             text: "New Appointment"
             font_style: "bold"
             text_color: "#062D3E"
-            role: "large"
+            role: "medium"
             adaptive_size: True
             pos_hint: {"x": 0.2, "y": 0.75}
         
@@ -561,16 +612,16 @@ KV = '''
             pos_hint: {"center_x": 0.5, "y": 0.15}
 
             MDLabel:
-                text: "select treatment"
+                text: "treatment"
                 font_style: "bold"
-                role: "medium"
+                role: "small"
                 text_color: "#062D3E"
                 size_hint: 0.5, 0.05
 
             MDLabel:
-                text: "date & time"
+                text: "date"
                 font_style: "bold"
-                role: "medium"
+                role: "small"
                 text_color: "#062D3E"
                 size_hint: 0.5, 0.05
             
@@ -623,7 +674,7 @@ KV = '''
                         text_color: "#062D3E"
                         radius: 20, 20, 20, 20
                         size_hint: 1, 0.8
-                        pos_hint: {"x": 0.075, "y": 0.005}  # Adjust position as needed
+                        pos_hint: {"x": 0.075, "y": 0.005}
                     
                 MDRelativeLayout:
                     md_bg_color: "#FFF9E6"
@@ -642,7 +693,7 @@ KV = '''
                     height: "50dp"
                     theme_width: "Custom"
                     size_hint_x: 1
-                    on_release: app.show_date_picker()
+                    on_release: app.show_modal_date_picker()
             
                     MDButtonText:
                         id: text
@@ -694,9 +745,7 @@ KV = '''
             md_bg_color: "#062D3E"
             pos_hint: {"x": 0.66, "y": 0.19}
             on_release:
-                app.upload_data()
-                app.clear_newappt_field()
-                root.current = "Menu"
+                app.validate_med_treat()
 
             MDButtonText:
                 text: "save"
@@ -722,6 +771,9 @@ KV = '''
                 role: "small"
                 theme_text_color: "Custom"
                 text_color: "#CDE2FF"
+        
+        FitImage:
+            source: "image/BG_Pet.png"
 
     MDScreen:
         name: "PrintBillInformation"
@@ -731,9 +783,9 @@ KV = '''
             text: "Print Bill"
             font_style: "bold"
             text_color: "#062D3E"
-            role: "large"
+            role: "medium"
             adaptive_size: True
-            pos_hint: {"x": 0.2, "y": 0.84}
+            pos_hint: {"x": 0.2, "y": 0.8}
         
         MDBoxLayout:
             orientation: "vertical"
@@ -741,23 +793,16 @@ KV = '''
             radius: 25, 25, 25, 25
             padding: "20dp"
             spacing: "20dp"
-            size_hint: 0.6, 0.2
-            pos_hint: {"center_x": 0.5, "y": 0.615}
-
-            MDLabel:
-                text: "find appt"
-                font_style: "bold"
-                role: "medium"
-                text_color: "#062D3E"
-                pos_hint: {"center_x": 0.5, "y": 0.5}
+            size_hint: 0.6, 0.14
+            pos_hint: {"center_x": 0.5, "y": 0.64}
 
             MDTextField:
                 id: search_field
                 style: "outlined"
                 font_style: "Title"
-                role: "medium"
+                role: "large"
                 radius: 12.5, 12.5, 12.5, 12.5
-                pos_hint: {"center_x": 0.5, "y": 0.5}
+                adaptive_size: True
                 on_text: app.filter_menu(self.text)
                 on_focus: if self.focus: app.find_appt()
 
@@ -767,12 +812,13 @@ KV = '''
 
             
         MDBoxLayout:
+            id: print_box
             orientation: "vertical"
             md_bg_color: "#FFF9E6"
             radius: 25, 25, 25, 25
-            padding: "25dp"
+            padding: "20dp"
             size_hint: 0.6, 0.525
-            pos_hint: {"center_x": 0.5, "y": 0.07}
+            pos_hint: {"center_x": 0.5, "y": 0.1}
 
             MDBoxLayout:
                 orientation: "vertical"
@@ -781,7 +827,7 @@ KV = '''
                     id: owner_print_name
                     text: "Nothing is selected!"
                     font_style: "bold"
-                    role: "medium"
+                    role: "small"
                     text_color: "#062D3E"
                     pos_hint: {"x": 0.025}
 
@@ -832,6 +878,10 @@ KV = '''
                 MDLabel:
                     text: ""
                     size_hint: 1, 0.95
+
+                MDLabel:
+                    text: ""
+                    size_hint: 1, 0.95
         
         MDButton:
             style: "elevated"
@@ -839,10 +889,9 @@ KV = '''
             theme_width: "Custom"
             width: "140dp"
             md_bg_color: "#062D3E"
-            pos_hint: {"x": 0.667, "y": 0.115}
+            pos_hint: {"x": 0.67, "y": 0.14}
             on_release:
                 app.print_bill()
-                root.current = "Menu"
 
             MDButtonText:
                 text: "print"
@@ -858,7 +907,7 @@ KV = '''
             theme_width: "Custom"
             width: "140dp"
             md_bg_color: "#062D3E"
-            pos_hint: {"x": 0.55, "y": 0.115}
+            pos_hint: {"x": 0.227, "y": 0.14}
             on_release:
                 root.current = "Menu"
 
@@ -869,7 +918,10 @@ KV = '''
                 role: "small"
                 theme_text_color: "Custom"
                 text_color: "#CDE2FF"
-
+        
+        FitImage:
+            source: "image/BG_2.png"
+    
     MDScreen:
         name: "CancelInformation"
         md_bg_color: "#CDE2FF"
@@ -878,36 +930,24 @@ KV = '''
             text: "Cancel Appointment"
             font_style: "bold"
             text_color: "#062D3E"
-            role: "large"
+            role: "medium"
             adaptive_size: True
-            pos_hint: {"x": 0.2, "y": 0.755}
+            pos_hint: {"x": 0.2, "y": 0.76}
         
         MDBoxLayout:
             orientation: "vertical"
             md_bg_color: "#FFF9E6"
             radius: 25, 25, 25, 25
-            padding: "30dp"
-            spacing: "5dp"
-            size_hint: 0.6, 0.32
-            pos_hint: {"center_x": 0.5, "y": 0.4}
-
-            MDLabel:
-                text: "find appt"
-                font_style: "bold"
-                role: "medium"
-                text_color: "#062D3E"
-                adaptive_size: True
-            
-            MDLabel:
-                text: ""
-                size_hint: 1, 0.125
-                pos_hint: {"center_x": 0.5, "y": 0.5}
+            padding: "25dp"
+            spacing: "20dp"
+            size_hint: 0.6, 0.225
+            pos_hint: {"center_x": 0.5, "y": 0.5}
 
             MDTextField:
                 id: search_cancel_field
                 style: "outlined"
                 font_style: "Title"
-                role: "medium"
+                role: "large"
                 radius: 12.5, 12.5, 12.5, 12.5
                 on_text: app.filter_cancel_menu(self.text)
                 on_focus: if self.focus: app.find_cancel_appt()
@@ -915,23 +955,21 @@ KV = '''
                 MDTextFieldLeadingIcon:
                     icon: "magnify"
                     pos_hint: {"x": 0.1}
-
+            
             MDLabel:
                 text: ""
                 size_hint: 1, 0.9
-                pos_hint: {"center_x": 0.5, "y": 0.5}
-        
+
         MDButton:
             style: "elevated"
             theme_bg_color: "Custom"
             theme_width: "Custom"
             width: "140dp"
             md_bg_color: "#062D3E"
-            pos_hint: {"x": 0.67, "y": 0.43}
+            pos_hint: {"x": 0.68, "y": 0.525}
             on_release:
                 app.cancel_appt()
                 app.clear_cancel_field()
-                root.current = "Menu"
 
             MDButtonText:
                 text: "cancel"
@@ -939,7 +977,7 @@ KV = '''
                 font_style: "semi_bold"
                 role: "small"
                 theme_text_color: "Custom"
-                text_color: "#CDE2FF"
+                text_color: "#FFF9E6"
 
         MDButton:
             style: "elevated"
@@ -947,7 +985,7 @@ KV = '''
             theme_width: "Custom"
             width: "140dp"
             md_bg_color: "#062D3E"
-            pos_hint: {"x": 0.55, "y": 0.43}
+            pos_hint: {"x": 0.216, "y": 0.525}
             on_release:
                 root.current = "Menu"
 
@@ -957,10 +995,65 @@ KV = '''
                 font_style: "semi_bold"
                 role: "small"
                 theme_text_color: "Custom"
-                text_color: "#CDE2FF"
+                text_color: "#FFF9E6"
+
+        FitImage:
+            source: "image/BG_Pet.png"
         
+    MDScreen:
+        name: "ViewAllAppt"
+        md_bg_color: "#CDE2FF"
+        on_enter: app.list_all()
 
+        MDLabel:
+            text: "All Appointment"
+            font_style: "bold"
+            text_color: "#062D3E"
+            role: "medium"
+            adaptive_size: True
+            pos_hint: {"x": 0.2105, "y": 0.8}
+        
+        MDRelativeLayout:
+            orientation: "vertical"
+            radius: 25, 25, 25, 25
+            padding: "35dp"
+            spacing: "5dp"
+            size_hint: 0.6, 0.57
+            pos_hint: {"center_x": 0.5, "y": 0.2}
 
+            MDScrollView:
+                do_scroll_x: False
+                padding: "15dp"
+                spacing: "5dp"
+
+                MDBoxLayout:
+                    id: main_scroll
+                    orientation: "vertical"
+                    padding: "15dp"
+                    spacing: "5dp"
+                    adaptive_height: True
+        
+        MDButton:
+            style: "elevated"
+            theme_bg_color: "Custom"
+            theme_width: "Custom"
+            width: "140dp"
+            md_bg_color: "#062D3E"
+            pos_hint: {"x": 0.21, "y": 0.1}
+            on_release:
+                app.clear_list()
+                root.current = "Menu"
+
+            MDButtonText:
+                text: "back"
+                pos_hint: {"center_x": .5, "center_y": .5}
+                font_style: "semi_bold"
+                role: "small"
+                theme_text_color: "Custom"
+                text_color: "#FFF9E6"
+
+        FitImage:
+            source: "image/BG_1.png"
 
 '''
 
@@ -969,10 +1062,200 @@ class MyScreenManager(MDScreenManager):
     pass
 
 class PetClinic(MDApp):
-#Halaman MedTreatInformation
+    #Autentikasi Laman Login
+    def login(self):
+        id_name = self.root.ids.id_field.text
+        password = self.root.ids.password_field.text
+
+        #Kalau TextFieldnya Kosong
+        if id_name == '' or password == '':
+            sb_kosong = MDSnackbar(
+            MDSnackbarText(
+                text="Please Enter your Username and Password",
+                ),
+                y=dp(24),
+                pos_hint={"x" : 0.025},
+                size_hint_x=0.4)
+            sb_kosong.open()
+            return
+        
+        #Membaca Database Pengguna
+        file_path = "data_pet_clinic/database_login.csv"
+        with open(file_path, newline='') as csvfile:
+            reader = csv.DictReader(csvfile)
+            for row in reader:
+                if  id_name == row['ID Name'] and password == row['Password']:
+                    #Kalau Berhasil Login
+                    self.root.current = "Menu"
+                    self.root.ids.nurse_name.text = f"Vet. {id_name}!"
+                    return
+            
+            #Kalau Gagal Login
+            sb_salah = MDSnackbar(
+                MDSnackbarText(
+                    text="Incorrect ID Name or Password",
+                ),
+                y=dp(24),
+                pos_hint={"x" : 0.025},
+                size_hint_x=0.4)
+            sb_salah.open()
+
+    #Laman New Appt
+    #Kalendar
+    def show_modal_date_picker(self, *args):
+        date_dialog = MDModalDatePicker()
+        date_dialog.bind(on_edit=self.on_edit)
+        date_dialog.bind(on_cancel=self.on_cancel)
+        date_dialog.bind(on_ok=self.on_ok)
+        date_dialog.open()
+
+    #Kalendar Input (untuk tombol edit)
+    def show_modal_input_date_picker(self, *args):
+        def on_edit(*args):
+            date_dialog.dismiss()
+            Clock.schedule_once(self.show_modal_date_picker, 0.2)
+
+        date_dialog = MDModalInputDatePicker()
+        date_dialog.bind(on_edit=on_edit)
+        date_dialog.open()
+
+    #Tombol Edit
+    def on_edit(self, instance_date_picker):
+        instance_date_picker.dismiss()
+        Clock.schedule_once(self.show_modal_input_date_picker, 0.2)
+
+    # Tombol OK
+    def on_ok(self, instance_date_picker):
+        global format_date
+        date = instance_date_picker.get_date()[0]
+        format_date = date.strftime("%d/%m/%Y")
+        self.root.ids.selected_date_label.text = f"{format_date}"
+        instance_date_picker.dismiss()
+    
+    #Tombol Cancel
+    def on_cancel(self, instance_date_picker):
+        instance_date_picker.dismiss()
+
+    #Mengambil Input dari Checkbox Male/Female
+    def check_sex(self, value):
+        global male_female
+        male_female = value
+        return male_female
+    
+    #Mengambil Input dari Checkbox Spayed/Neuteur
+    def check_spay(self, value):
+        global spay
+        spay = value
+        return spay
+
+    #Menyimpan Data Appt ke Database
+    def upload_data(self):
+        appt = self.root.ids.owner_field.text
+        patient = self.root.ids.petname_field.text
+        weight = self.root.ids.weight_field.text
+        breed = self.root.ids.breed_field.text
+        age = self.root.ids.age_field.text
+        medtreat = self.root.ids.selected_item_label.text
+
+        with open("data_pet_clinic/data_appt.csv", mode='a', newline='') as file:
+                writer = csv.writer(file)
+                writer.writerow([appt, patient, weight, breed, male_female, age, spay, medtreat, format_date])
+        MDSnackbar(
+            MDSnackbarText(
+                text="Appointment has been made!",
+                ),
+                y=dp(24),
+                pos_hint={"x" : 0.025},
+                size_hint_x=0.4).open()
+    
+    #Menghapus Input pada TextField
+    def clear_newappt(self):
+        self.root.ids.owner_field.text = ""
+        self.root.ids.petname_field.text = ""
+        self.root.ids.weight_field.text = ""
+        self.root.ids.breed_field.text = ""
+        self.root.ids.age_field.text = ""
+        self.root.ids.phone_field.text = ""
+        self.root.ids.selected_item_label.text = ""
+        self.root.ids.selected_date_label.text = ""
+        self.root.ids.spayed_no_field.active = False
+        self.root.ids.spayed_yes_field.active = False
+        self.root.ids.male_field.active = False
+        self.root.ids.female_field.active = False
+    
+    def validate_owner_info(self):
+        if self.root.ids.owner_field.text.strip() == "" or self.root.ids.phone_field.text.strip() == "":
+            self.root.ids.owner_field.error = True
+            self.root.ids.phone_field.error = True
+        else:
+            self.root.current = "PetInformation"
+
+    def validate_pet_info(self):
+        if self.root.ids.petname_field.text.strip() == "" or self.root.ids.weight_field.text.strip() == "" or self.root.ids.breed_field.text.strip() == "" or self.root.ids.age_field.text.strip() == "" or self.root.ids.spayed_no_field.active == False and self.root.ids.spayed_yes_field.active == False or self.root.ids.male_field.active == False and self.root.ids.female_field.active == False:
+            self.root.ids.petname_field.error = True
+            self.root.ids.weight_field.error = True
+            self.root.ids.breed_field.error = True
+            self.root.ids.age_field.error = True
+        else:
+            self.root.current = "MedTreatmentInformation"
+    
+    def validate_med_treat(self):
+        if self.root.ids.selected_item_label.text == "" or self.root.ids.selected_date_label.text == "":
+            MDSnackbar(
+            MDSnackbarText(
+                text="Please fill all the requirements!",
+                ),
+                y=dp(24),
+                pos_hint={"x" : 0.025},
+                size_hint_x=0.4).open()
+        else:
+            self.upload_data()
+            self.clear_newappt()
+            self.root.current = "Menu"
+
+    #View All Appt
+    def list_all(self):
+        df_appt = pd.read_csv("data_pet_clinic/data_appt.csv")
+        df_appt['Date'] = pd.to_datetime(df_appt['Date'], dayfirst=True).dt.date
+        df_appt = df_appt.sort_values(by='Date')
+        global info
+        info = {}
+        for i, row in df_appt.iterrows():
+            info[i] = row.tolist()
+
+        global headline, display_info
+        for info_item, info_value in info.items():
+            headline = info_value[0]
+            format_date = info_value[8]
+            converted_format_date =  format_date.strftime("%d/%m/%Y")
+            appt_info = [info_value[7], (info_value[8])]
+            display_info = str(appt_info[0]) + " | " + converted_format_date
+
+            self.root.ids.main_scroll.add_widget(
+            MDListItem(
+                MDListItemHeadlineText(text=str(headline),
+                                       theme_font_name= "Custom",
+                                       font_name="font/semi_bold.ttf",
+                                       theme_font_size= "Custom",
+                                       font_size="18dp"),
+                MDListItemSupportingText(text=str(display_info),
+                                         theme_font_name= "Custom",
+                                         font_name="font/light.ttf",
+                                         theme_font_size= "Custom",
+                                         font_size="15dp"),
+                pos_hint={"center_x": .5, "center_y": .5},
+                radius= [15, 15, 15, 15],
+                theme_bg_color="Custom",
+                md_bg_color = get_color_from_hex("#FFF9E6")
+            )
+        )
+    
+    def clear_list(self):
+        self.root.ids.main_scroll.clear_widgets()
+        
     # Membuat Drop Down Menu
     def menu_open(self):
-        treatments = self.extract_medical_treatments("./Pet-Clinic-Kelompok-19/data_pet_clinic/price.csv")
+        treatments = self.extract_medical_treatments("data_pet_clinic/price.csv")
         menu_items = [
             {
                 "text": treatment,
@@ -1002,119 +1285,10 @@ class PetClinic(MDApp):
     # Menampilkan Treatment yang dipilih
     def menu_callback(self, text_item):
         self.root.ids.selected_item_label.text = f"{text_item}"
-    
-    # Tombol edit pada kalendar
-    def show_modal_input_date_picker(self, *args):
-        def on_edit(*args):
-            date_dialog.dismiss()
-            Clock.schedule_once(self.show_modal_date_picker, 0.2)
-
-        date_dialog = MDModalInputDatePicker()
-        date_dialog.bind(on_edit=on_edit)
-        date_dialog.open()
-
-    # Event On_edit pada kalendar
-    def on_edit(self, instance_date_picker):
-        instance_date_picker.dismiss()
-        Clock.schedule_once(self.show_modal_input_date_picker, 0.2)
-    
-    # Tombol OK
-    def on_ok(self, instance_date_picker):
-        global date
-        date = instance_date_picker.get_date()[0]
-        self.root.ids.selected_date_label.text = f"{date}"
-        instance_date_picker.dismiss()
-    
-    #Tombol Cancel
-    def on_cancel(self, instance_date_picker):
-        instance_date_picker.dismiss()
-
-    #Menampilkan Kalendar
-    def show_date_picker(self):
-        date_dialog = MDModalDatePicker()
-        date_dialog.bind(on_edit=self.on_edit)
-        date_dialog.bind(on_ok=self.on_ok)
-        date_dialog.open()
-        date_dialog.bind(on_cancel=self.on_cancel)
-
-#Halaman Login
-    #Login
-    def login(self):
-        id_name = self.root.ids.id_field.text
-        password = self.root.ids.password_field.text
-        
-        #Membaca Database Pengguna
-        file_path = "./Pet-Clinic-Kelompok-19/data_pet_clinic/database_login.csv"
-        with open(file_path, newline='') as csvfile:
-            reader = csv.DictReader(csvfile)
-            for row in reader:
-                if row['ID Name'] == id_name and row['Password'] == password:
-                    #Berhasil Login
-                    self.root.current = "Menu"
-                    self.root.ids.nurse_name.text = f"Ns. {id_name}"
-                    return
-                
-        #Gagal Login
-        MDSnackbar(
-            MDSnackbarText(
-                text="Incorrect ID Name or Password",
-                ),
-                y=dp(24),
-                pos_hint={"x" : 0.025},
-                size_hint_x=0.4).open()
         
     #Menghapus Input pada TextField
     def clear_cancel_field(self):
         self.root.ids.search_cancel_field.text = f""
-
-    #Menghapus Input pada TextField
-    def clear_login_field(self):
-        self.root.ids.id_field.text = f""
-        self.root.ids.password_field.text = f""
-
-#Halaman New Appt
-    #Menghapus Input pada TextField
-    def clear_newappt_field(self):
-        self.root.ids.owner_field.text = f""
-        self.root.ids.petname_field.text = f""
-        self.root.ids.weight_field.text = f""
-        self.root.ids.breed_field.text = f""
-        self.root.ids.age_field.text = f""
-        self.root.ids.phone_field.text = f""
-        self.root.ids.selected_item_label.text = f""
-        self.root.ids.selected_date_label.text = f""
-
-    #Mengambil Input dari Checkbox Male/Female
-    def on_checkbox_active(self, value):
-        global male
-        male = value
-        return male
-    
-    #Mengambil Input dari Checkbox Spayed/Neuteur
-    def on_checkbox_active2(self, value):
-        global spayed
-        spayed = value
-        return spayed
-
-    #Menyimpan Data Appt ke Database
-    def upload_data(self):
-        appt = str(self.root.ids.owner_field.text)
-        patient = str(self.root.ids.petname_field.text)
-        weight = str(self.root.ids.weight_field.text)
-        breed = str(self.root.ids.breed_field.text)
-        age = str(self.root.ids.age_field.text)
-        medtreat = str(self.root.ids.selected_item_label.text)
-
-        with open("./Pet-Clinic-Kelompok-19/data_pet_clinic/data_pet_clinic/data_appt.csv", mode='a', newline='') as file:
-                writer = csv.writer(file)
-                writer.writerow([appt, patient, weight, male, breed, age, spayed, medtreat, date])
-        MDSnackbar(
-            MDSnackbarText(
-                text="Appointment has been made!",
-                ),
-                y=dp(24),
-                pos_hint={"x" : 0.025},
-                size_hint_x=0.4).open()
 
 #Halaman Print Bill
     # Filter buat Print
@@ -1128,17 +1302,17 @@ class PetClinic(MDApp):
     def set_item(self, appt_item):
         self.root.ids.search_field.text = appt_item
         menu_bill.dismiss()
-        with open("./Pet-Clinic-Kelompok-19/data_pet_clinic/data_pet_clinic/data_appt.csv", 'r', newline='') as file:
+        with open("data_pet_clinic/data_appt.csv", 'r', newline='') as file:
             reader = csv.DictReader(file)
             for row in reader:
                 if row['Appt'] == appt_item:
-                    self.root.ids.owner_print_name.text   = f"Appt {appt_item}"
+                    self.root.ids.owner_print_name.text   = f"Appointment {appt_item}"
                     self.root.ids.pet_print_name.text     = f"Patient : {row['Patient']}"
                     self.root.ids.breed_print_name.text   = f"Breed : {row['Breed']}"
-                    self.root.ids.date_print_name.text    = f"Appt Date : {row['Date']}"
+                    self.root.ids.date_print_name.text    = f"Date : {row['Date']}"
                     self.root.ids.treat_print_name.text   = f"Medical Treatment : {row['Medical Treatment']}"
 
-        with open("./Pet-Clinic-Kelompok-19/data_pet_clinic/price.csv", 'r', newline='') as file:
+        with open("data_pet_clinic/price.csv", 'r', newline='') as file:
             reader = csv.DictReader(file)
             obat = self.root.ids.treat_print_name.text
             for row in reader:
@@ -1158,9 +1332,9 @@ class PetClinic(MDApp):
                 allappt.append(appt)
         return allappt
 
-    # Mencari Appt
+    # Menu DropDown Mencari Appt
     def find_appt(self):
-        allappt = self.extract_appt("./Pet-Clinic-Kelompok-19/data_pet_clinic/data_appt.csv")
+        allappt = self.extract_appt("data_pet_clinic/data_appt.csv")
         global all_appt_items
         all_appt_items = [
             {
@@ -1188,7 +1362,7 @@ class PetClinic(MDApp):
             menu_cancel.items = all_appt_items
 
     def find_cancel_appt(self):
-        allappt = self.extract_appt("./Pet-Clinic-Kelompok-19/data_pet_clinic/data_appt.csv")
+        allappt = self.extract_appt("data_pet_clinic/data_appt.csv")
         global all_appt_items
         all_appt_items = [
             {
@@ -1200,13 +1374,13 @@ class PetClinic(MDApp):
         menu_cancel = MDDropdownMenu(
             caller=self.root.ids.search_cancel_field,
             items=all_appt_items,
-            width=dp(500),
+            width=dp(600),
             ver_growth="down",
             radius=[10, 10, 10, 10],
             position="bottom",
         )
         menu_cancel.open()
-    
+
     def display_cancel_appt(self, appt_item):
         self.root.ids.search_cancel_field.text = appt_item
         menu_cancel.dismiss()
@@ -1214,97 +1388,124 @@ class PetClinic(MDApp):
     def cancel_appt(self):
         nama_appt_cancel = self.root.ids.search_cancel_field.text
         filtered_rows = []
-        with open("./Pet-Clinic-Kelompok-19/data_pet_clinic/data_appt.csv", 'r', newline='') as file:
-            reader = csv.DictReader(file)
-            fieldnames = reader.fieldnames
-            for row in reader:
-                if row['Appt'] != nama_appt_cancel:
-                    filtered_rows.append(row)
-        
-        with open("./Pet-Clinic-Kelompok-19/data_pet_clinic/data_appt.csv", 'w', newline='') as file:
-            writer = csv.DictWriter(file, fieldnames=fieldnames)
-            writer.writeheader()
-            writer.writerows(filtered_rows)
-        
-        MDSnackbar(
+        if nama_appt_cancel.strip() == "":
+            sb_gagal_cancel = MDSnackbar(
             MDSnackbarText(
-                text="Appointment has been canceled!",
+                text="Please select an appointment first",
                 ),
                 y=dp(24),
                 pos_hint={"x" : 0.025},
-                size_hint_x=0.4).open()
-    
+                size_hint_x=0.4)
+            sb_gagal_cancel.open()
+        else:
+            with open("data_pet_clinic/data_appt.csv", 'r', newline='') as file:
+                reader = csv.DictReader(file)
+                fieldnames = reader.fieldnames
+                for row in reader:
+                    if row['Appt'] != nama_appt_cancel:
+                        filtered_rows.append(row)
+            
+                with open("data_pet_clinic/data_appt.csv", 'w', newline='') as file:
+                    writer = csv.DictWriter(file, fieldnames=fieldnames)
+                    writer.writeheader()
+                    writer.writerows(filtered_rows)
+                self.root.current = "Menu"
+
+                sb_berhasil_cancel = MDSnackbar(
+                MDSnackbarText(
+                    text="Appointment Removed",
+                    ),
+                    y=dp(24),
+                    pos_hint={"x" : 0.025},
+                    size_hint_x=0.4)
+                sb_berhasil_cancel.open()
+        
     def print_bill(self):
         appt = self.root.ids.owner_print_name.text
         date = self.root.ids.date_print_name.text
         new_date = date.replace("Appt Date : ", "")
         patient = self.root.ids.pet_print_name.text
         breed = self.root.ids.breed_print_name.text
-        date = self.root.ids.date_print_name.text
         med = self.root.ids.treat_print_name.text
         price = self.root.ids.price_print_name.text
 
-        pdf = FPDF()
-        pdf.add_page()
-        pdf.set_font("Arial", size = 12)
-        pdf.cell(100, 8, txt = "=============================================", ln = True, align = 'C')
-        pdf.cell(100, 8, txt = "Pet Clinic", ln = True, align = 'C')
-        pdf.cell(100, 8, txt = "Veterinary Invoices", ln = True, align = 'C')
-        pdf.cell(100, 8, txt = "=============================================", ln = True, align = 'C')
-
-        pdf.set_font("Arial", size = 12)
-        pdf.cell(100, 8, txt = "=============================================", ln = True, align = 'C')
-        pdf.cell(100, 8, txt = f"{appt}", ln = True)
-        pdf.cell(100, 8, txt = f"Date : {new_date}",  ln = True)
-        pdf.cell(100, 8, txt = f"{patient}",  ln = True)
-        pdf.cell(100, 8, txt = f"{breed}",  ln = True)
-        
-        pdf.cell(100, 8, txt = "=============================================", ln = True, align = 'C')
-        pdf.cell(100, 8, txt = f"{med}",  ln = True)
-        pdf.cell(100, 8, txt = f"Total Payment : {price}",  ln = True)
-        pdf.cell(100, 8, txt = "=============================================", ln = True, align = 'C')
-
-        pdf_file_path = "vet_invoice.pdf"
-        pdf.output(pdf_file_path)
-
-        MDSnackbar(
+        if appt.strip() == "" or date.strip() == "" or new_date.strip() == "" or patient.strip() == "" or breed.strip() == "" or med.strip() == "" or price.strip() == "":
+            sb_gagal_print = MDSnackbar(
             MDSnackbarText(
-                text="Bill has been printed!",
+                text="Please select an appointment first",
                 ),
                 y=dp(24),
                 pos_hint={"x" : 0.025},
-                size_hint_x=0.4).open()
+                size_hint_x=0.4)
+            sb_gagal_print.open()
+        else:
+            pdf = FPDF()
+            pdf.add_page()
+            pdf.set_font("Arial", size = 12)
+            pdf.cell(100, 8, txt = "=============================================", ln = True, align = 'C')
+            pdf.cell(100, 8, txt = "Pet Clinic", ln = True, align = 'C')
+            pdf.cell(100, 8, txt = "Veterinary Invoices", ln = True, align = 'C')
+            pdf.cell(100, 8, txt = "=============================================", ln = True, align = 'C')
+
+            pdf.set_font("Arial", size = 12)
+            pdf.cell(100, 8, txt = "=============================================", ln = True, align = 'C')
+            pdf.cell(100, 8, txt = f"{appt}", ln = True)
+            pdf.cell(100, 8, txt = f"Date : {new_date}",  ln = True)
+            pdf.cell(100, 8, txt = f"{patient}",  ln = True)
+            pdf.cell(100, 8, txt = f"{breed}",  ln = True)
+            
+            pdf.cell(100, 8, txt = "=============================================", ln = True, align = 'C')
+            pdf.cell(100, 8, txt = f"{med}",  ln = True)
+            pdf.cell(100, 8, txt = f"Total Payment : {price}",  ln = True)
+            pdf.cell(100, 8, txt = "=============================================", ln = True, align = 'C')
+
+            pdf_file_path = "vet_invoice.pdf"
+            pdf.output(pdf_file_path)
+
+            self.root.current = "Menu"
+
+            MDSnackbar(
+                MDSnackbarText(
+                    text="Invoice Printed",
+                    ),
+                    y=dp(24),
+                    pos_hint={"x" : 0.025},
+                    size_hint_x=0.4).open()
+            
+            path = "vet_invoice.pdf"
+            webbrowser.open_new(path)
     
     def close_program(self):
         PetClinic().stop()
 
     def build(self):
+        
         LabelBase.register(
             name="bold",
-            fn_regular="./Pet-Clinic-Kelompok-19/font/bold.ttf",
+            fn_regular="font/bold.ttf",
         )
 
         self.theme_cls.font_styles["bold"] = {
             "large": {
                 "line-height": 1,
                 "font-name": "bold",
-                "font-size": sp(48),
+                "font-size": sp(68),
             },
             "medium": {
                 "line-height": 1,
                 "font-name": "bold",
-                "font-size": sp(30),
+                "font-size": sp(48),
             },
             "small": {
                 "line-height": 1,
                 "font-name": "bold",
-                "font-size": sp(62),
+                "font-size": sp(30),
             },
         }
 
         LabelBase.register(
             name="semi_bold",
-            fn_regular="./Pet-Clinic-Kelompok-19/font/semi_bold.ttf",
+            fn_regular="font/semi_bold.ttf",
         )
 
         self.theme_cls.font_styles["semi_bold"] = {
@@ -1327,7 +1528,7 @@ class PetClinic(MDApp):
 
         LabelBase.register(
             name="regular",
-            fn_regular="./Pet-Clinic-Kelompok-19/font/regular.ttf",
+            fn_regular="font/regular.ttf",
         )
 
         self.theme_cls.font_styles["regular"] = {
@@ -1350,7 +1551,7 @@ class PetClinic(MDApp):
 
         LabelBase.register(
             name="light",
-            fn_regular="./Pet-Clinic-Kelompok-19/font/light.ttf",
+            fn_regular="font/light.ttf",
         )
 
         self.theme_cls.font_styles["light"] = {
