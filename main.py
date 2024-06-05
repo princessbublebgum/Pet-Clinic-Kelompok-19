@@ -1,19 +1,19 @@
+from kivy.config import Config
+Config.set ("graphics", "resizable", False)
+Config.set ("graphics", "width", 1366)
+Config.set ("graphics", "height", 705)
+from docxtpl import DocxTemplate
+from docx2pdf import convert
 from kivy.lang import Builder
 import webbrowser
 from kivymd.app import MDApp
 from kivymd.uix.screenmanager import MDScreenManager
-from kivy.config import Config
-Config.set ("graphics", "resizable", False)
-Config.set ("graphics", "width", 1920)
-Config.set ("graphics", "height", 1080)
-from kivy.core.window import Window
 from kivy.core.text import LabelBase
 from kivy.metrics import sp, dp
 from kivymd.uix.menu import MDDropdownMenu
 from kivymd.uix.pickers import MDModalDatePicker, MDModalInputDatePicker
 from kivymd.uix.snackbar import MDSnackbar, MDSnackbarText
 from kivy.clock import Clock
-from fpdf import FPDF
 from kivy.utils import get_color_from_hex
 from kivymd.uix.list import (
     MDListItem,
@@ -22,8 +22,6 @@ from kivymd.uix.list import (
 )
 import pandas as pd
 import csv
-
-Window.maximize()
 
 KV = '''
 <MyScreenManager>:
@@ -347,6 +345,7 @@ KV = '''
                     md_bg_color: "#062D3E"
                     pos_hint: {"x": 0.815}
                     on_release:
+                        app.validate_phone_number()
                         app.validate_owner_info()
 
                     MDButtonText:
@@ -366,6 +365,7 @@ KV = '''
             md_bg_color: "#062D3E"
             pos_hint: {"x": 0.225, "y": 0.215}
             on_release:
+                app.clear_newappt()
                 root.current = "Menu"
 
             MDButtonText:
@@ -472,7 +472,9 @@ KV = '''
                         size: dp(20), dp(20)
                         pos_hint: {'center_x': 0.025, 'center_y': .5}
                         active: False
-                        on_active: app.check_sex("Male" if self.active else "")
+                        on_active:
+                            app.validate_sex_check2()
+                            app.check_sex("Male" if self.active else "")
 
                     MDLabel:
                         text: "female"
@@ -487,7 +489,9 @@ KV = '''
                         size: dp(20), dp(20)
                         pos_hint: {'center_x': 0.35, 'center_y': .5}
                         active: False
-                        on_active: app.check_sex("Female" if self.active else "")
+                        on_active:
+                            app.validate_sex_check3()
+                            app.check_sex("Female" if self.active else "")
 
                 MDLabel:
                     text: "weight (in kg)"
@@ -523,7 +527,9 @@ KV = '''
                         size: dp(20), dp(20)
                         pos_hint: {'center_x': 0.025, 'center_y': .5}
                         active: False
-                        on_active: app.check_spay("Yes" if self.active else "")
+                        on_active:
+                            app.validate_spay_check2()
+                            app.check_spay("Yes" if self.active else "")
 
                     MDLabel:
                         id: no_spayed_field
@@ -538,7 +544,9 @@ KV = '''
                         size_hint: None, None
                         size: dp(20), dp(20)
                         pos_hint: {'center_x': 0.35, 'center_y': .5}
-                        on_active: app.check_spay("No" if self.active else "")
+                        on_active:
+                            app.validate_spay_check3()
+                            app.check_spay("No" if self.active else "")
 
             MDLabel:
                 text: ""
@@ -564,6 +572,10 @@ KV = '''
             md_bg_color: "#062D3E"
             pos_hint: {"x": 0.8, "y": 0.125}
             on_release:
+                app.validate_weight_number()
+                app.validate_age_number()
+                app.validate_sex_check1()
+                app.validate_spay_check1()
                 app.validate_pet_info()
 
             MDButtonText:
@@ -911,6 +923,7 @@ KV = '''
             md_bg_color: "#062D3E"
             pos_hint: {"x": 0.227, "y": 0.14}
             on_release:
+                app.clear_print_bill()
                 root.current = "Menu"
 
             MDButtonText:
@@ -989,6 +1002,7 @@ KV = '''
             md_bg_color: "#062D3E"
             pos_hint: {"x": 0.216, "y": 0.525}
             on_release:
+                app.clear_cancel_field()
                 root.current = "Menu"
 
             MDButtonText:
@@ -1066,11 +1080,14 @@ class MyScreenManager(MDScreenManager):
 class PetClinic(MDApp):
     #Autentikasi Laman Login
     def login(self):
+        global id_name
         id_name = self.root.ids.id_field.text
         password = self.root.ids.password_field.text
 
         #Kalau TextFieldnya Kosong
         if id_name == '' or password == '':
+            self.root.ids.id_field.error = True
+            self.root.ids.password_field.error = True
             sb_kosong = MDSnackbar(
             MDSnackbarText(
                 text="Please Enter your Username and Password",
@@ -1093,6 +1110,8 @@ class PetClinic(MDApp):
                     return
             
             #Kalau Gagal Login
+            self.root.ids.id_field.error = True
+            self.root.ids.password_field.error = True
             sb_salah = MDSnackbar(
                 MDSnackbarText(
                     text="Incorrect ID Name or Password",
@@ -1185,19 +1204,90 @@ class PetClinic(MDApp):
         self.root.ids.male_field.active = False
         self.root.ids.female_field.active = False
     
+    def validate_phone_number(self):
+        try:
+            float(self.root.ids.phone_field.text)
+            return True
+        except ValueError:
+            return False
+    
     def validate_owner_info(self):
-        if self.root.ids.owner_field.text.strip() == "" or self.root.ids.phone_field.text.strip() == "":
-            self.root.ids.owner_field.error = True
-            self.root.ids.phone_field.error = True
+        check_phone = self.validate_phone_number()
+
+        if self.root.ids.owner_field.text.strip() == "" or self.root.ids.phone_field.text.strip() == "" or check_phone is False:
+            if self.root.ids.owner_field.text.strip() == "":
+                self.root.ids.owner_field.error = True
+            if self.root.ids.phone_field.text.strip() == "" or check_phone is False:
+                self.root.ids.phone_field.error = True
         else:
             self.root.current = "PetInformation"
 
+    def validate_weight_number(self):
+        try:
+            float(self.root.ids.weight_field.text)
+            return True
+        except ValueError:
+            return False
+    
+    def validate_age_number(self):
+        try:
+            int(self.root.ids.age_field.text)
+            return True
+        except ValueError:
+            return False
+    
+    def validate_spay_check1(self):
+        try:
+            if self.root.ids.spayed_yes_field.active == False and self.root.ids.spayed_no_field.active == False:
+                return False
+        except ValueError:
+            return True
+    
+    def validate_spay_check2(self):
+        if self.root.ids.spayed_yes_field.active == True:
+            self.root.ids.spayed_no_field.active = False
+    
+    def validate_spay_check3(self):
+        if self.root.ids.spayed_no_field.active == True:
+            self.root.ids.spayed_yes_field.active = False
+
+    def validate_sex_check1(self):
+        try:
+            if self.root.ids.male_field.active == False and self.root.ids.female_field.active == False:
+                return False
+        except ValueError:
+            return True
+    
+    def validate_sex_check2(self):
+        if self.root.ids.male_field.active == True:
+            self.root.ids.female_field.active = False
+
+    def validate_sex_check3(self):
+        if self.root.ids.female_field.active == True:
+            self.root.ids.male_field.active = False
+        
+
     def validate_pet_info(self):
-        if self.root.ids.petname_field.text.strip() == "" or self.root.ids.weight_field.text.strip() == "" or self.root.ids.breed_field.text.strip() == "" or self.root.ids.age_field.text.strip() == "" or self.root.ids.spayed_no_field.active == False and self.root.ids.spayed_yes_field.active == False or self.root.ids.male_field.active == False and self.root.ids.female_field.active == False:
-            self.root.ids.petname_field.error = True
-            self.root.ids.weight_field.error = True
-            self.root.ids.breed_field.error = True
-            self.root.ids.age_field.error = True
+        check_weight = self.validate_weight_number()
+        check_age = self.validate_age_number()
+        check_spay1 = self.validate_spay_check1()
+        check_sex1 = self.validate_sex_check1()
+        ids = [self.root.ids.petname_field.text,
+               self.root.ids.weight_field.text,
+               self.root.ids.breed_field.text,
+               self.root.ids.age_field.text]
+        
+        if ids[0] == "" or ids[1] == "" or ids[2] == "" or ids[3] == "" or check_weight is False or check_age is False or check_spay1 is False:
+            if ids[0] == "":
+                self.root.ids.petname_field.error = True
+            if ids[2] == "":
+                self.root.ids.breed_field.error = True
+            if ids[3] == "" or check_age is False:
+                self.root.ids.age_field.error = True
+            if ids[1] == "" or check_weight is False:
+                self.root.ids.weight_field.error = True
+            if check_sex1 is False or check_spay1 is False:
+                pass
         else:
             self.root.current = "MedTreatmentInformation"
     
@@ -1421,17 +1511,32 @@ class PetClinic(MDApp):
                     pos_hint={"x" : 0.025},
                     size_hint_x=0.4)
                 sb_berhasil_cancel.open()
+    
+    def clear_print_bill(self):
+        self.root.ids.search_field.text = f""
+        self.root.ids.owner_print_name.text = f""
+        self.root.ids.date_print_name.text = f""
+        self.root.ids.pet_print_name.text = f""
+        self.root.ids.breed_print_name.text = f""
+        self.root.ids.treat_print_name.text = f""
+        self.root.ids.price_print_name.text = f""
+
         
     def print_bill(self):
         appt = self.root.ids.owner_print_name.text
+        appt = appt.replace("Appointment ", "")
         date = self.root.ids.date_print_name.text
-        new_date = date.replace("Appt Date : ", "")
+        date = date.replace("Date : ", "")
         patient = self.root.ids.pet_print_name.text
+        patient = patient.replace("Patient : ", "")
         breed = self.root.ids.breed_print_name.text
+        breed = breed.replace("Breed : ", "")
         med = self.root.ids.treat_print_name.text
+        med = med.replace("Medical Treatment : ", "")
         price = self.root.ids.price_print_name.text
+        price = price.replace("Total Payment : ", "")
 
-        if appt.strip() == "" or date.strip() == "" or new_date.strip() == "" or patient.strip() == "" or breed.strip() == "" or med.strip() == "" or price.strip() == "":
+        if appt.strip() == "" or date.strip() == "" or date.strip() == "" or patient.strip() == "" or breed.strip() == "" or med.strip() == "" or price.strip() == "":
             sb_gagal_print = MDSnackbar(
             MDSnackbarText(
                 text="Please select an appointment first",
@@ -1441,30 +1546,23 @@ class PetClinic(MDApp):
                 size_hint_x=0.4)
             sb_gagal_print.open()
         else:
-            pdf = FPDF()
-            pdf.add_page()
-            pdf.set_font("Arial", size = 12)
-            pdf.cell(100, 8, txt = "=============================================", ln = True, align = 'C')
-            pdf.cell(100, 8, txt = "Pet Clinic", ln = True, align = 'C')
-            pdf.cell(100, 8, txt = "Veterinary Invoices", ln = True, align = 'C')
-            pdf.cell(100, 8, txt = "=============================================", ln = True, align = 'C')
+            doc = DocxTemplate("Invoice_Template.docx")
+            context = {
+                "Vet" : id_name,
+                "Appointment" : appt,
+                "Date": date,
+                "Patient": patient,
+                "Breed": breed,
+                "Medical_Treatment" : med,
+                "Total_Payment" :price
+            }
 
-            pdf.set_font("Arial", size = 12)
-            pdf.cell(100, 8, txt = "=============================================", ln = True, align = 'C')
-            pdf.cell(100, 8, txt = f"{appt}", ln = True)
-            pdf.cell(100, 8, txt = f"Date : {new_date}",  ln = True)
-            pdf.cell(100, 8, txt = f"{patient}",  ln = True)
-            pdf.cell(100, 8, txt = f"{breed}",  ln = True)
-            
-            pdf.cell(100, 8, txt = "=============================================", ln = True, align = 'C')
-            pdf.cell(100, 8, txt = f"{med}",  ln = True)
-            pdf.cell(100, 8, txt = f"Total Payment : {price}",  ln = True)
-            pdf.cell(100, 8, txt = "=============================================", ln = True, align = 'C')
-
-            pdf_file_path = "vet_invoice.pdf"
-            pdf.output(pdf_file_path)
+            doc.render(context)
+            doc.save("Generated_Invoice.docx")
+            convert("Generated_Invoice.docx")
 
             self.root.current = "Menu"
+            self.clear_print_bill()
 
             MDSnackbar(
                 MDSnackbarText(
@@ -1474,7 +1572,7 @@ class PetClinic(MDApp):
                     pos_hint={"x" : 0.025},
                     size_hint_x=0.4).open()
             
-            path = "vet_invoice.pdf"
+            path = "Generated_Invoice.pdf"
             webbrowser.open_new(path)
     
     def close_program(self):
